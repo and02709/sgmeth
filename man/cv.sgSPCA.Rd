@@ -18,7 +18,8 @@ cv.sgSPCA(
   parallel = F,
   n.cores = NULL,
   ind.names = NULL,
-  part.balance = F
+  part.balance = F,
+  mc.method = T
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ cv.sgSPCA(
 \item{ind.names}{vector of each observation label}
 
 \item{part.balance}{flag for whether folds process should balance factors}
+
+\item{mc.method}{flag for whether the parallel method should use mclapply}
 }
 \description{
 cross validation function for sparse supervised PCA

@@ -17,7 +17,8 @@ cv.gSPCA(
   niter = 50,
   trace = F,
   part.balance = T,
-  ind.names = NULL
+  ind.names = NULL,
+  mc.method = T
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ cv.gSPCA(
 \item{part.balance}{flag for whether folds process should balance factors}
 
 \item{ind.names}{vector of each observation label}
+
+\item{mc.method}{flag for whether the parallel method should use mclapply}
 }
 \description{
 cross validation function for groupwise supervised PCA

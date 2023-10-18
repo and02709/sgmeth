@@ -17,7 +17,8 @@ cv.SSPCA(
   n.cores = NULL,
   niter = 50,
   trace = F,
-  part.balance = T
+  part.balance = T,
+  mc.method = T
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ cv.SSPCA(
 \item{trace}{display algorithm progress}
 
 \item{part.balance}{flag for whether folds process should balance factors}
+
+\item{mc.method}{flag for whether the parallel method should use mclapply}
 }
 \description{
 cross validation function for sparse supervised PCA

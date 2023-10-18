@@ -17,6 +17,7 @@ cv.gSIMPLS(
   niter = 50,
   trace = F,
   part.balance = T,
+  mc.method = T,
   ind.names = NULL
 )
 }
@@ -44,6 +45,8 @@ cv.gSIMPLS(
 \item{trace}{display algorithm progress}
 
 \item{part.balance}{flag for whether folds process should balance factors}
+
+\item{mc.method}{flag for whether the parallel method should use mclapply}
 
 \item{ind.names}{vector of each observation label}
 }
