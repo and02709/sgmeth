@@ -12,11 +12,14 @@
 #' @param n.cores number of cores to be used in parallel process
 #' @param ind.names vector of each observation label
 #' @param part.balance flag for whether folds process should balance factors
+#' @param mc.method flag for whether the parallel method should use mclapply
 #' @keywords Supervised Princpal Component Analysis
 #' @export
 #' @examples cv.gSPCA(X=xtrain, Y=ytrain, npc=1, n.folds=5, groups=group.list, nonzero.groups=c(1:20), kernel="linear", parallel=F, n.cores=NULL, niter=50, trace=T, part.balance=F,ind.names=NULL)
 
-cv.gSPCA <- function(X, Y, npc, n.folds=5, groups=NULL, nonzero.groups=NULL, kernel=c("linear", "delta"), parallel=F, n.cores=NULL, niter=50, trace=F, part.balance=T,ind.names=NULL){
+cv.gSPCA <- function(X, Y, npc, n.folds=5, groups=NULL, nonzero.groups=NULL, 
+                     kernel=c("linear", "delta"), parallel=F, n.cores=NULL, 
+                     niter=50, trace=F, part.balance=T,ind.names=NULL, mc.method=T){
 
   # Convert X to a matrix  
   X <- as.matrix(X)
@@ -68,13 +71,32 @@ cv.gSPCA <- function(X, Y, npc, n.folds=5, groups=NULL, nonzero.groups=NULL, ker
   colnames(param.grid) <- c("fold.arg","gr.arg")
   
   if(parallel){ 
-    if(is.null(n.cores)) n.cores <- parallel::detectCores()
-    clust <- parallel::makeCluster(n.cores)
-    metric.vec <- parallel::parApply(cl=clust,X=as.matrix(param.grid),1,cv_partition_group,df.partition=df.partition,npc=npc,
-                           n.folds=n.folds, groups=groups, kernel=kernel, ind.names=ind.names, niter=niter,trace=trace)
+    if(mc.method){
+      if(is.null(n.cores)) n.cores <- parallel::detectCores()
+      clust <- parallel::makeCluster(n.cores)
+      param.grid.l <- as.list(data.frame(t(param.grid)))
+      metric.vec <- unlist(parallel::mclapply(param.grid.l,cv_partition_group,
+                                              df.partition=df.partition,npc=npc,
+                                              n.folds=n.folds, groups=groups, 
+                                              kernel=kernel, ind.names=ind.names, 
+                                              niter=niter,trace=trace,
+                                              mc.cores=n.cores))
+    } else{
+      if(is.null(n.cores)) n.cores <- parallel::detectCores()
+      clust <- parallel::makeCluster(n.cores)
+      metric.vec <- parallel::parApply(cl=clust,X=as.matrix(param.grid),1,
+                                       cv_partition_group,
+                                       df.partition=df.partition,npc=npc,
+                                       n.folds=n.folds, groups=groups, 
+                                       kernel=kernel, ind.names=ind.names, 
+                                       niter=niter,trace=trace)
+    }
   } else{
-    metric.vec <- apply(X=as.matrix(param.grid),1,cv_partition_group,df.partition=df.partition,npc=npc,
-                           n.folds=n.folds, groups=groups, kernel=kernel, ind.names=ind.names, niter=niter,trace=trace)
+    metric.vec <- apply(X=as.matrix(param.grid),1,cv_partition_group,
+                        df.partition=df.partition,npc=npc,
+                           n.folds=n.folds, groups=groups, 
+                        kernel=kernel, ind.names=ind.names, 
+                        niter=niter,trace=trace)
   }
   
   
