@@ -15,7 +15,7 @@ extract_sumabs <- function(X, n, p, sumabsv, niter, trace, npc){
   if(sumabsv==sqrt(p)){
     return(list(d=temp$d, u=temp$u, v=temp$v))
   } else{
-    return(SSIMPLS::SMD.sumabs(X=X,d=temp$d,u=temp$u,v=temp$v,n=n,p=p,
+    return(sgmeth::SMD.sumabs(X=X,d=temp$d,u=temp$u,v=temp$v,n=n,p=p,
                       sumabsv=sumabsv,niter=niter,trace=trace,npc=npc))
   }
 }
